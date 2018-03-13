@@ -3,4 +3,4 @@
 HERE=`dirname $(readlink -f $0)`
 source "${HERE}/tstversion"
 pathmunge "${CONDA_BIN}"
-hutch-python --cfg "${HERE}/conf.yml" $@
+hutch-python --cfg "${HERE}/conf.yml" --sim $@
