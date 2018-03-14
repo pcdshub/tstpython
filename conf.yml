@@ -1,7 +1,7 @@
 hutch: tst
 
 # Locate happi database
-db: /reg/g/pcds/pyps/apps/hutch-python/device_config/db.json
+db: happi_db.json
 
 # Hutch-specific imports
 load: tst.beamline

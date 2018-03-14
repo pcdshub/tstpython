@@ -1,0 +1,149 @@
+{
+    "Tst:Det:1": {
+        "_id": "Tst:Det:1",
+        "active": true,
+        "args": [],
+        "beamline": "TST",
+        "creation": "Tue Mar 13 15:58:05 2018",
+        "device_class": "ophyd.sim.ABDetector",
+        "kwargs": {
+            "name": "{{name}}"
+        },
+        "last_edit": "Tue Mar 13 15:58:05 2018",
+        "macros": null,
+        "name": "det 1",
+        "parent": null,
+        "prefix": "Tst:Det:1",
+        "screen": null,
+        "stand": "DG1",
+        "system": null,
+        "type": "Device",
+        "z": -1.0
+    },
+    "Tst:Det:2": {
+        "_id": "Tst:Det:2",
+        "active": true,
+        "args": [],
+        "beamline": "TST",
+        "creation": "Tue Mar 13 15:58:17 2018",
+        "device_class": "ophyd.sim.ABDetector",
+        "kwargs": {
+            "name": "{{name}}"
+        },
+        "last_edit": "Tue Mar 13 15:58:17 2018",
+        "macros": null,
+        "name": "det 2",
+        "parent": null,
+        "prefix": "Tst:Det:2",
+        "screen": null,
+        "stand": "DG2",
+        "system": null,
+        "type": "Device",
+        "z": -1.0
+    },
+    "Tst:Mtr:1": {
+        "_id": "Tst:Mtr:1",
+        "active": true,
+        "args": [],
+        "beamline": "TST",
+        "creation": "Tue Mar 13 15:42:06 2018",
+        "device_class": "ophyd.sim.SynAxis",
+        "kwargs": {
+            "name": "{{name}}"
+        },
+        "last_edit": "Tue Mar 13 15:47:24 2018",
+        "macros": null,
+        "name": "motor 1",
+        "parent": null,
+        "prefix": "Tst:Mtr:1",
+        "screen": null,
+        "stand": "DG1",
+        "system": null,
+        "type": "Device",
+        "z": -1.0
+    },
+    "Tst:Mtr:2": {
+        "_id": "Tst:Mtr:2",
+        "active": true,
+        "args": [],
+        "beamline": "TST",
+        "creation": "Tue Mar 13 15:51:49 2018",
+        "device_class": "ophyd.sim.SynAxis",
+        "kwargs": {
+            "name": "{{name}}"
+        },
+        "last_edit": "Tue Mar 13 15:52:16 2018",
+        "macros": null,
+        "name": "motor 2",
+        "parent": null,
+        "prefix": "Tst:Mtr:2",
+        "screen": null,
+        "stand": "DG1",
+        "system": null,
+        "type": "Device",
+        "z": -1.0
+    },
+    "Tst:Mtr:3": {
+        "_id": "Tst:Mtr:3",
+        "active": true,
+        "args": [],
+        "beamline": "TST",
+        "creation": "Tue Mar 13 15:53:36 2018",
+        "device_class": "ophyd.sim.SynAxis",
+        "kwargs": {
+            "name": "{{name}}"
+        },
+        "last_edit": "Tue Mar 13 15:53:36 2018",
+        "macros": null,
+        "name": "motor 3",
+        "parent": null,
+        "prefix": "Tst:Mtr:3",
+        "screen": null,
+        "stand": "DG1",
+        "system": null,
+        "type": "Device",
+        "z": -1.0
+    },
+    "Tst:Mtr:4": {
+        "_id": "Tst:Mtr:4",
+        "active": true,
+        "args": [],
+        "beamline": "TST",
+        "creation": "Tue Mar 13 15:53:51 2018",
+        "device_class": "ophyd.sim.SynAxis",
+        "kwargs": {
+            "name": "{{name}}"
+        },
+        "last_edit": "Tue Mar 13 15:53:51 2018",
+        "macros": null,
+        "name": "motor 4",
+        "parent": null,
+        "prefix": "Tst:Mtr:4",
+        "screen": null,
+        "stand": "DG2",
+        "system": null,
+        "type": "Device",
+        "z": -1.0
+    },
+    "Tst:Mtr:5": {
+        "_id": "Tst:Mtr:5",
+        "active": true,
+        "args": [],
+        "beamline": "TST",
+        "creation": "Tue Mar 13 15:54:03 2018",
+        "device_class": "ophyd.sim.SynAxis",
+        "kwargs": {
+            "name": "{{name}}"
+        },
+        "last_edit": "Tue Mar 13 15:54:03 2018",
+        "macros": null,
+        "name": "motor 5",
+        "parent": null,
+        "prefix": "Tst:Mtr:5",
+        "screen": null,
+        "stand": "DG2",
+        "system": null,
+        "type": "Device",
+        "z": -1.0
+    }
+}
