@@ -9,3 +9,5 @@ with safe_load('example xcs motor'):
 with safe_load('coupled sim motor and det'):
     from ophyd.sim import motor as sim_motor, det as sim_det
     sim_det.kind = 'hinted'
+    from ophyd.sim import SynAxis
+    SynAxis.move = SynAxis.set
