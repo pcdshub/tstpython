@@ -1,5 +1,5 @@
 #!/bin/bash
 # Launch hutch-python with all devices
-HERE="$(dirname $(readlink -f ${BASH_SOURCE[0]}))"
+HERE="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "${HERE}/tstenv"
-hutch-python --cfg "${HERE}/conf.yml" $@
+hutch-python --cfg "${HERE}/conf.yml" "$@"

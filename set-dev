@@ -2,6 +2,7 @@
 # Usage: ./set-dev <repo> [package [org]] [--http]
 # Org defaults to 'pcdshub', package defaults to repo name
 # Defaults to ssh remote, use --http if you prefer that
+set -e
 
 if [ -z "$1" ]; then
   echo "Usage: ./set-dev <repo> [package [org]]" >&2
@@ -12,12 +13,13 @@ REPO="$1"
 PACKAGE=${2:-${REPO}}
 ORG=${3:-"pcdshub"}
 
-HERE=`dirname $(readlink -f $0)`
+HERE="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 mkdir -p "${HERE}/dev/devpath"
 
-pushd "${HERE}/dev"
+cd "${HERE}/dev"
 
 if [ ! -d "${REPO}" ]; then
+  # shellcheck disable=SC2199
   if [[ "$@" =~ "--http" ]]; then
     git clone "https://github.com/${ORG}/${REPO}.git"
   else
@@ -25,6 +27,4 @@ if [ ! -d "${REPO}" ]; then
   fi
 fi
 
-ln -s `readlink -f "${REPO}/${PACKAGE}"` "devpath/${PACKAGE}"
-
-popd
+ln -s "$(readlink -f "${REPO}/${PACKAGE}")" "devpath/${PACKAGE}"

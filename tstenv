@@ -9,13 +9,14 @@ export NFS_BASE="/cds/group/pcds/pyps/conda/py39"
 
 
 echo "Loading NFS python env ${CONDA_ENVNAME}"
+# shellcheck disable=SC1091
 source "${NFS_BASE}/etc/profile.d/conda.sh"
 conda activate "${CONDA_ENVNAME}"
 
 unset PYTHONPATH
 unset LD_LIBRARY_PATH
 
-HERE=`dirname $(readlink -f $BASH_SOURCE)`
+HERE="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
 if [ -f "${HERE}/dev/hutch-python/bin/hutch-python" ]; then
     export PATH="${HERE}/dev/hutch-python/bin:${PATH}"

@@ -1,5 +1,9 @@
 #!/bin/bash
-export QS_STARTUP_DIR="$(readlink -f $(dirname ${BASH_SOURCE[0]}))"
+set -e
+
+export QS_STARTUP_DIR
+QS_STARTUP_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+# shellcheck disable=SC1091
 source "${QS_STARTUP_DIR}/../../tstenv"
 
 # Why are these set to the wrong numbers in startup somewhere?
