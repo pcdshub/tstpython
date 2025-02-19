@@ -1,10 +1,13 @@
 hutch: tst
 
 # Locate happi database
-db: /reg/g/pcds/pyps/apps/hutch-python/tst/happi_db.json
+db: happi_db.json
 
 # Hutch-specific imports
 load: tst.beamline
 
-# Fake experimnet
+# Fake experiment
 experiment: tstx42
+
+# Fake daq
+daq_type: lcls1-sim

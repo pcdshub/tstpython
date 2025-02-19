@@ -1,4 +1,6 @@
 dev
+queueserver/ioc-tst-redis/db
+queueserver/ioc-tst-bsgui-qs/existing_plans_and_devices.yaml
 
 # Ignore generated database file
 tst/db.txt
