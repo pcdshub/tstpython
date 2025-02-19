@@ -5,3 +5,6 @@ db: /reg/g/pcds/pyps/apps/hutch-python/tst/happi_db.json
 
 # Hutch-specific imports
 load: tst.beamline
+
+# Fake experimnet
+experiment: tstx42

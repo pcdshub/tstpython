@@ -1,6 +1,11 @@
 from hutch_python.utils import safe_load
 
 
+with safe_load('disable scan pvs'):
+    from tst.db import scan_pvs
+    scan_pvs.disable()
+
+
 with safe_load('example xcs motor'):
     from pcdsdevices.epics_motor import IMS
     xcs_user_30 = IMS('XCS:USR:MMS:30', name='xcs_user_30')
