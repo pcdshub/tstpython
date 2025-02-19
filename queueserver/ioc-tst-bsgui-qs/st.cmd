@@ -1,10 +1,10 @@
 #!/bin/bash
-set -e
-
 export QS_STARTUP_DIR
 QS_STARTUP_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 # shellcheck disable=SC1091
 source "${QS_STARTUP_DIR}/../../tstenv"
+
+set -e
 
 # Why are these set to the wrong numbers in startup somewhere?
 export EPICS_CA_SERVER_PORT=5064
