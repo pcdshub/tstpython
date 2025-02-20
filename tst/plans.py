@@ -6,7 +6,6 @@ import bluesky.plans as bp
 import bluesky.preprocessors as bpp
 from ophyd.epics_motor import EpicsMotor
 from ophyd.pv_positioner import PVPositioner
-from ophyd.status import Status
 from psdaq.control.BlueskyScan import BlueskyScan
 
 from .util import get_motor_by_pvname, get_signal_motor_by_pvname
@@ -309,34 +308,6 @@ def daq_scan_config(
     yield from bps.configure(daq, motors=motors, **kwargs)
 
 
-class DaqStateSetter:
-    """
-    Wrapper for changing the DAQ state in a bluesky scan.
-    """
-
-    # More states exist, but these are supported by BlueskyScan
-    VALID_STATES = (
-        # Not in run
-        "connected",
-        # In a run, not getting data
-        "starting",
-        # Getting data
-        "running",
-    )
-
-    def __init__(self, daq: BlueskyScan):
-        self.daq = daq
-
-    def set(self, state: str) -> Status:
-        st = Status(self)
-        if state in self.VALID_STATES:
-            self.daq.push_socket.send_string(state)
-            st.set_finished()
-        else:
-            st.set_exception(ValueError(f"{state} not supported here."))
-        return st
-
-
 def start_run(
     start_daq_run: bool = True,
     daq: BlueskyScan | None = None,
@@ -348,17 +319,18 @@ def start_run(
     This can be used to begin a bluesky run and a DAQ run.
     This will fail if ran twice in a row with no end_run.
 
-    You should configure the daq before running this.
-
     Scans that themselves open and close runs will fail
     if they are used after this plan. It's meant to be used
     in conjunction with the *_steps plan to assemble
     arbitrary custom trajectories.
+
+    Note that the run doesn't officially start until we
+    take the first event of data.
     """
     yield from bps.open_run(md=md)
     if start_daq_run:
         daq = get_daq(daq)
-        yield from bps.mv(DaqStateSetter(daq), "starting")
+        yield from bps.stage(daq)
 
 
 def end_run(
@@ -375,4 +347,4 @@ def end_run(
     yield from bps.close_run()
     if end_daq_run:
         daq = get_daq(daq)
-        yield from bps.mv(DaqStateSetter(daq), "connected")
+        yield from bps.unstage(daq)
