@@ -264,22 +264,44 @@ def daq_motor_pv_scan(
     )
 
 
-def daq_scan_config(daq=None, **kwargs):
+def daq_scan_config(
+    daq=None,
+    motors=None,
+    pv_scan_pvs=None,
+    motor_pv_scan_pvs=None,
+    **kwargs,
+):
     """
     Queueserver-compatible DAQ configuration.
 
     This doesn't do a configure transition, it just sets up parameters.
+    You must call this before starting a run for most of the parameters
+    to be used.
 
     Parameters
     ----------
     daq: Daq, optional
         The daq object, which can be passed manually or automatically discovered.
+    motors: list of motors, optional
+        Motors to tell the daq to include in the data stream.
+    pv_scan_pvs: list of str, optional
+        PVs to include in the daq data stream.
+    motor_pv_scan_pvs: list of str, optional
+        Motor PVs to include in the daq data stream.
     kwargs: various
-        The settings to change on the daq. These are left as generic kwargs so this
-        function doesn't need to change as the daq libraries update.
+        The other settings to change on the daq. These are left as generic kwargs so
+        this function doesn't need to change as the daq libraries update.
     """
+    if motors is None:
+        motors = []
+    else:
+        motors = list(motors)
+    if pv_scan_pvs is not None:
+        motors.extend(get_signal_motor_by_pvname(pv) for pv in pv_scan_pvs)
+    if motor_pv_scan_pvs is not None:
+        motors.extend(get_motor_by_pvname(pv) for pv in motor_pv_scan_pvs)
     daq = get_daq(daq)
-    yield from bps.configure(daq, **kwargs)
+    yield from bps.configure(daq, motors=motors, **kwargs)
 
 
 class DaqStateSetter:
