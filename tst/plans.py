@@ -209,6 +209,11 @@ def motor_pv_scan(
 
 
 def get_daq(daq: BlueskyScan | None = None) -> BlueskyScan:
+    """
+    Helper to grab the daq object if the user didn't provide it.
+
+    Mostly used as a shim so I can sub in test daq devices.
+    """
     if daq is None:
         from hutch.db import daq  # type: ignore # noqa: F401
     return daq
@@ -305,6 +310,10 @@ def daq_scan_config(
 
 
 class DaqStateSetter:
+    """
+    Wrapper for changing the DAQ state in a bluesky scan.
+    """
+
     # More states exist, but these are supported by BlueskyScan
     VALID_STATES = (
         # Not in run
