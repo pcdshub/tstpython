@@ -112,6 +112,9 @@ def device_scan(
     This variant starts and stops both a bluesky and/or a DAQ run before and after
     the steps. To use the DAQ, include it as part of the detectors list.
 
+    If the DAQ is included, the "motors" configuration argument will automatically
+    be populated.
+
     Parameters
     ----------
     detectors: list of readables
@@ -132,6 +135,9 @@ def device_scan(
         If True (default), go back and forth through the subscans.
         If False, go only forward.
     """
+    for det in detectors:
+        if isinstance(det, BlueskyScan):
+            yield from bps.configure(det, motors=[motor])
     yield from bpp.stage_wrapper(
         bpp.run_wrapper(
             device_steps(
@@ -310,6 +316,8 @@ def start_run(
 
     This can be used to begin a bluesky run and a DAQ run.
     This will fail if ran twice in a row with no end_run.
+
+    You should configure the daq before running this.
 
     Scans that themselves open and close runs will fail
     if they are used after this plan. It's meant to be used
