@@ -10,4 +10,5 @@ load: tst.beamline
 experiment: tstx42
 
 # Fake daq
-daq_type: lcls1-sim
+daq_type: lcls2
+daq_host: ctl-tst-dev-02
