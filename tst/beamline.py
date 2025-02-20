@@ -16,4 +16,4 @@ with safe_load("coupled sim motor and det"):
 
 
 with safe_load("test plans from ued"):
-    from .plans import pv_scan, motor_pv_scan  # noqa: F401, I001
+    from .plans import *  # noqa: F403
