@@ -19,21 +19,26 @@ def device_steps(
     and_back: bool = True,
 ):
     """
-    Move a motor device from start to stop in n steps as part of a larger run.
+    Move a motor device from start to stop in n steps as part of a larger DAQ run.
 
     Complete the motion subscans number of times.
     Read data from each detector at each step.
     (Note: the DAQ is a detector)
 
-    This must be used after an open_run bluesky message,
-    or within a run_wrapper.
+    This is its own Bluesky run for queueserver compatibility, but it will not
+    end the DAQ run, unlike device_scan.
 
     See the device_scan docstring for more information about input arguments.
     """
-    for _ in range(subscans):
-        yield from bpp.stub_wrapper(bp.scan(detectors, motor, start, stop, num))
-        if and_back:
-            start, stop = stop, start
+
+    @bpp.run_decorator(md=None)
+    def _inner(start: float, stop: float):
+        for _ in range(subscans):
+            yield from bpp.stub_wrapper(bp.scan(detectors, motor, start, stop, num))
+            if and_back:
+                start, stop = stop, start
+
+    yield from _inner(start, stop)
 
 
 def pv_steps(
@@ -109,6 +114,9 @@ def device_scan(
     This variant starts and stops both a bluesky and/or a DAQ run before and after
     the steps. To use the DAQ, include it as part of the detectors list.
 
+    See daq_device_scan for a variant that automatically includes the daq argument
+    as the sole detector.
+
     If the DAQ is included, the "motors" configuration argument will automatically
     be populated.
 
@@ -136,16 +144,14 @@ def device_scan(
         if isinstance(det, BlueskyScan):
             yield from bps.configure(det, motors=[motor])
     yield from bpp.stage_wrapper(
-        bpp.run_wrapper(
-            device_steps(
-                detectors=detectors,
-                motor=motor,
-                start=start,
-                stop=stop,
-                num=num,
-                subscans=subscans,
-                and_back=and_back,
-            )
+        device_steps(
+            detectors=detectors,
+            motor=motor,
+            start=start,
+            stop=stop,
+            num=num,
+            subscans=subscans,
+            and_back=and_back,
         ),
         detectors + [motor],
     )
@@ -166,6 +172,7 @@ def pv_scan(
     PV motors cannot check for completion, but can be used for things like voltages.
 
     See the device_scan docstring for more information about input arguments.
+    See daq_pv_scan for a variant that automatically includes the DAQ.
     """
     yield from device_scan(
         detectors=detectors,
@@ -193,6 +200,7 @@ def motor_pv_scan(
     EpicsMotor devices have proper move completion information.
 
     See the device_scan docstring for more information about input arguments.
+    See daq_motor_pv_scan for a variant that automatically includes the daq.
     """
     yield from device_scan(
         detectors=detectors,
@@ -306,43 +314,47 @@ def daq_scan_config(
     yield from bps.configure(daq, motors=motors, **kwargs)
 
 
-def start_run(
-    start_daq_run: bool = True,
+def daq_start_run(
     daq=None,  # : Optional[BlueskyScan], but queueserver type annotation is hard
-    md=None,  # Optional[dict], but queueserver type annotation is broken
 ):
     """
-    Queueserver-compatible run start plan.
+    Queueserver-compatible DAQ run start plan.
 
-    This can be used to begin a bluesky run and a DAQ run.
-    This will fail if ran twice in a row with no end_run.
+    This can be used to begin a DAQ run.
+    Internally, it sets the DAQ to the "connected" state, so that
+    at the first data point we "configure" and "enable" the DAQ,
+    at which point the run officially starts.
 
-    Scans that themselves open and close runs will fail
-    if they are used after this plan. It's meant to be used
-    in conjunction with the *_steps plan to assemble
-    arbitrary custom trajectories.
+    Note that you should not call this twice in a row, due to the
+    implementation details this will actually end the run.
+
+    Scans that themselves start and stop the runs will lead to
+    confusing behavior when combined with this plan.
+    This is meant to be used in conjunction with the *_steps plans
+    to assemble arbitrary custom trajectories.
 
     Note that the run doesn't officially start until we
     take the first event of data.
+
+    Internally, this runs daq.stage, which is a generic function
+    to prepare DAQ for a run. The precise details of this function
+    are subject to change.
     """
-    yield from bps.open_run(md=md)
-    if start_daq_run:
-        daq = get_daq(daq)
-        yield from bps.stage(daq)
+    daq = get_daq(daq)
+    yield from bps.stage(daq)
 
 
-def end_run(
-    end_daq_run: bool = True,
+def daq_end_run(
     daq=None,  # : BlueskyScan | None, but queueserver type annotation is hard
 ):
     """
-    Queueserver-compatible run end plan.
+    Queueserver-compatible DAQ run end plan.
 
-    This can be used to end a bluesky run and a DAQ run.
-    This will fail if ran twice in a row, or if called
-    without first running start_run.
+    This can be used to end a DAQ run.
+
+    Internally, this runs daq.unstage, which is a generic function
+    to bring a DAQ out of a run. The precise details of this function
+    are subject to change.
     """
-    yield from bps.close_run()
-    if end_daq_run:
-        daq = get_daq(daq)
-        yield from bps.unstage(daq)
+    daq = get_daq(daq)
+    yield from bps.unstage(daq)
