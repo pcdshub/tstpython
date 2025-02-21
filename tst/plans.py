@@ -4,8 +4,6 @@ from __future__ import annotations
 import bluesky.plan_stubs as bps
 import bluesky.plans as bp
 import bluesky.preprocessors as bpp
-from ophyd.epics_motor import EpicsMotor
-from ophyd.pv_positioner import PVPositioner
 from psdaq.control.BlueskyScan import BlueskyScan
 
 from .util import get_motor_by_pvname, get_signal_motor_by_pvname
@@ -13,7 +11,7 @@ from .util import get_motor_by_pvname, get_signal_motor_by_pvname
 
 def device_steps(
     detectors: list,
-    motor: EpicsMotor | PVPositioner,
+    motor,  # : Moveable, but queueserver type annotation is slightly broken
     start: float,
     stop: float,
     num: int,
@@ -96,7 +94,7 @@ def motor_pv_steps(
 
 def device_scan(
     detectors: list,
-    motor: EpicsMotor | PVPositioner,
+    motor,  # : Moveable, but queueserver type annotation is slightly broken
     start: float,
     stop: float,
     num: int,
@@ -310,8 +308,8 @@ def daq_scan_config(
 
 def start_run(
     start_daq_run: bool = True,
-    daq: BlueskyScan | None = None,
-    md: dict | None = None,
+    daq=None,  # : Optional[BlueskyScan], but queueserver type annotation is hard
+    md=None,  # Optional[dict], but queueserver type annotation is broken
 ):
     """
     Queueserver-compatible run start plan.
@@ -335,7 +333,7 @@ def start_run(
 
 def end_run(
     end_daq_run: bool = True,
-    daq: BlueskyScan | None = None,
+    daq=None,  # : BlueskyScan | None, but queueserver type annotation is hard
 ):
     """
     Queueserver-compatible run end plan.
