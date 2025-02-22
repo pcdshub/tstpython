@@ -214,7 +214,7 @@ def get_daq(daq: BlueskyScan | None = None) -> BlueskyScan:
     Mostly used as a shim so I can sub in test daq devices.
     """
     if daq is None:
-        from hutch.db import daq  # type: ignore # noqa: F401
+        from tst.db import daq  # type: ignore # noqa: F401
     return daq
 
 
