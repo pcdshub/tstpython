@@ -344,7 +344,7 @@ def daq_start_run(
     yield from bps.stage(daq)
 
 
-def daq_end_run(
+def daq_stop_run(
     daq=None,  # : BlueskyScan | None, but queueserver type annotation is hard
 ):
     """
