@@ -38,6 +38,7 @@ class FakeDaqLcls2:
         self.seq_ctl = None
 
         self.done_ev = Event()
+        self.last_pos = None
 
     def read(self):
         return {}
@@ -46,11 +47,21 @@ class FakeDaqLcls2:
         return {}
 
     def trigger(self):
-        self.state = DaqState.RUNNING
         self.done_ev.set()
         self.done_ev.clear()
         status = Status(self)
-        self.start_running_thread(status)
+        if self.state in (
+            DaqState.RESET,
+            DaqState.UNALLOCATED,
+            DaqState.ALLOCATED,
+            DaqState.RUNNING,
+        ):
+            status.set_exception(
+                RuntimeError(f"Invalid starting state {self.state} for trigger!")
+            )
+        else:
+            self.state = DaqState.RUNNING
+            self.start_running_thread(status)
         return status
 
     def start_running_thread(self, status: Status):
@@ -58,6 +69,15 @@ class FakeDaqLcls2:
         self.th.start()
 
     def _collection_thread(self, status: Status):
+        try:
+            for motor in self.motors:
+                # This is checked in the real daq, so it will error here if invalid
+                self.last_pos = motor.position
+        except Exception:
+            status.set_exception(
+                RuntimeError("Daq requires real motor objects in motors config!")
+            )
+            return
         interrupted = self.done_ev.wait(self.events / self.rate)
         if interrupted:
             status.set_exception(RuntimeError("Collection thread interrupted"))
