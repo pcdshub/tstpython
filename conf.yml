@@ -9,6 +9,5 @@ load: tst.beamline
 # Fake experiment
 experiment: tstx42
 
-# Fake daq
-daq_type: lcls2
-daq_host: ctl-tst-dev-02
+# No standard test daq, make one ourselves in repo
+daq_type: nodaq

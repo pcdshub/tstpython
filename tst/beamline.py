@@ -1,5 +1,11 @@
 from hutch_python.utils import safe_load
 
+with safe_load("fake daq"):
+    from .fake_daq import FakeDaqLcls2
+
+    daq = FakeDaqLcls2()
+
+
 with safe_load("disable scan pvs"):
     from tst.db import scan_pvs  # type: ignore
 
