@@ -6,15 +6,15 @@ from threading import Event, Thread
 from ophyd.status import Status
 
 
-class DaqState(enum.Enum):
-    RESET = enum.auto()
-    UNALLOCATED = enum.auto()
-    ALLOCATED = enum.auto()
-    CONNECTED = enum.auto()
-    CONFIGURED = enum.auto()
-    STARTING = enum.auto()
-    PAUSED = enum.auto()
-    RUNNING = enum.auto()
+class DaqState(enum.IntEnum):
+    RESET = 0
+    UNALLOCATED = 1
+    ALLOCATED = 2
+    CONNECTED = 3
+    CONFIGURED = 4
+    STARTING = 5
+    PAUSED = 6
+    RUNNING = 7
 
 
 class FakeDaqLcls2:
@@ -37,8 +37,23 @@ class FakeDaqLcls2:
         self.alg_version = [1, 0, 0]
         self.seq_ctl = None
 
-        self.done_ev = Event()
+        self.interrupt_ev = Event()
         self.last_pos = None
+
+    def _change_state(self, new_state: DaqState):
+        # Change through states and print the changes
+        self.interrupt_ev.set()
+        while self.state != new_state:
+            if new_state > self.state:
+                next_state = DaqState(self.state.value + 1)
+            else:
+                next_state = DaqState(self.state.value - 1)
+            if self.state == DaqState.CONFIGURED and next_state == DaqState.STARTING:
+                print("STARTING RUN")
+            elif self.state == DaqState.STARTING and next_state == DaqState.CONFIGURED:
+                print("ENDING RUN")
+            self.state = next_state
+            print(f"State is now {self.state.name}")
 
     def read(self):
         return {}
@@ -47,8 +62,7 @@ class FakeDaqLcls2:
         return {}
 
     def trigger(self):
-        self.done_ev.set()
-        self.done_ev.clear()
+        self.interrupt_ev.set()
         status = Status(self)
         if self.state in (
             DaqState.RESET,
@@ -60,7 +74,7 @@ class FakeDaqLcls2:
                 RuntimeError(f"Invalid starting state {self.state} for trigger!")
             )
         else:
-            self.state = DaqState.RUNNING
+            self._change_state(DaqState.RUNNING)
             self.start_running_thread(status)
         return status
 
@@ -69,6 +83,7 @@ class FakeDaqLcls2:
         self.th.start()
 
     def _collection_thread(self, status: Status):
+        self.interrupt_ev.clear()
         try:
             for motor in self.motors:
                 # This is checked in the real daq, so it will error here if invalid
@@ -78,11 +93,11 @@ class FakeDaqLcls2:
                 RuntimeError("Daq requires real motor objects in motors config!")
             )
             return
-        interrupted = self.done_ev.wait(self.events / self.rate)
+        interrupted = self.interrupt_ev.wait(self.events / self.rate)
         if interrupted:
             status.set_exception(RuntimeError("Collection thread interrupted"))
         else:
-            self.state = DaqState.STARTING
+            self._change_state(DaqState.STARTING)
             status.set_finished()
 
     def read_configuration(self):
@@ -166,11 +181,9 @@ class FakeDaqLcls2:
         return ({}, {})
 
     def stage(self):
-        self.done_ev.set()
-        self.state = DaqState.CONNECTED
+        self._change_state(DaqState.CONNECTED)
         return [self]
 
     def unstage(self):
-        self.done_ev.set()
-        self.state = DaqState.CONNECTED
+        self._change_state(DaqState.CONNECTED)
         return [self]
