@@ -117,9 +117,6 @@ def device_scan(
     See daq_device_scan for a variant that automatically includes the daq argument
     as the sole detector.
 
-    If the DAQ is included, the "motors" configuration argument will automatically
-    be populated.
-
     Parameters
     ----------
     detectors: list of readables
@@ -140,9 +137,6 @@ def device_scan(
         If True (default), go back and forth through the subscans.
         If False, go only forward.
     """
-    for det in detectors:
-        if isinstance(det, BlueskyScan):
-            yield from bps.configure(det, motors=[motor])
     yield from bpp.stage_wrapper(
         device_steps(
             detectors=detectors,
