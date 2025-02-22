@@ -10,7 +10,7 @@ from .util import get_motor_by_pvname, get_signal_motor_by_pvname
 
 
 def device_steps(
-    detectors: list,
+    detectors,  # : list[Readable], but broken annotations
     motor,  # : Moveable, but queueserver type annotation is slightly broken
     start: float,
     stop: float,
@@ -42,7 +42,7 @@ def device_steps(
 
 
 def pv_steps(
-    detectors: list,
+    detectors,  # : list[Readable], but broken annotations
     pvname: str,
     start: float,
     stop: float,
@@ -70,7 +70,7 @@ def pv_steps(
 
 
 def motor_pv_steps(
-    detectors: list,
+    detectors,  # : list[Readable], but broken annotations
     pvname: str,
     start: float,
     stop: float,
@@ -98,7 +98,7 @@ def motor_pv_steps(
 
 
 def device_scan(
-    detectors: list,
+    detectors,  # : list[Readable], but broken annotations
     motor,  # : Moveable, but queueserver type annotation is slightly broken
     start: float,
     stop: float,
@@ -152,7 +152,7 @@ def device_scan(
 
 
 def pv_scan(
-    detectors: list,
+    detectors,  # : list[Readable], but broken annotations
     pvname: str,
     start: float,
     stop: float,
@@ -180,7 +180,7 @@ def pv_scan(
 
 
 def motor_pv_scan(
-    detectors: list,
+    detectors,  # : list[Readable], but broken annotations
     pvname: str,
     start: float,
     stop: float,
